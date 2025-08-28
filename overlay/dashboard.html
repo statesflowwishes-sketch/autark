@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AUTARK SYSTEM - Original Overlay</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .overlay-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .title {
+            font-size: 3em;
+            text-shadow: 0 0 20px #00ff88;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #88ffaa;
+            opacity: 0.8;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .panel {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        .panel h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00ff88;
+            border-bottom: 1px solid #00ff88;
+            padding-bottom: 5px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px;
+            background: rgba(0, 255, 136, 0.02);
+            border-radius: 5px;
+        }
+        
+        .status-online {
+            color: #00ff88;
+            text-shadow: 0 0 5px #00ff88;
+        }
+        
+        .status-warning {
+            color: #ffaa00;
+            text-shadow: 0 0 5px #ffaa00;
+        }
+        
+        .metric {
+            font-size: 2em;
+            text-align: center;
+            color: #00ff88;
+            text-shadow: 0 0 15px #00ff88;
+            margin: 10px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            color: #88ffaa;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #00ff88; }
+            to { text-shadow: 0 0 30px #00ff88, 0 0 40px #00ff88; }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .pulse { animation: pulse 2s infinite; }
+        
+        .terminal-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .agent-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-rain" id="matrixCanvas"></canvas>
+    
+    <div class="overlay-container">
+        <div class="header">
+            <div class="title">🤖 AUTARK SYSTEM</div>
+            <div class="subtitle">Multi-Agent Orchestration Platform • Based on Abacus AI CodeLLM CLI</div>
+        </div>
+        
+        <div class="main-grid">
+            <div class="panel">
+                <h3>🔧 System Status</h3>
+                <div class="status-item">
+                    <span>Orchestrator</span>
+                    <span class="status-online pulse">⚡ AKTIV</span>
+                </div>
+                <div class="status-item">
+                    <span>PostgreSQL</span>
+                    <span class="status-online">✅ Port 5433</span>
+                </div>
+                <div class="status-item">
+                    <span>Redis Cache</span>
+                    <span class="status-online">✅ Port 6380</span>
+                </div>
+                <div class="status-item">
+                    <span>Qdrant Vector</span>
+                    <span class="status-warning">⚠️ Port 6334</span>
+                </div>
+                <div class="status-item">
+                    <span>MongoDB</span>
+                    <span class="status-online">✅ Port 27018</span>
+                </div>
+                <div class="status-item">
+                    <span>Elasticsearch</span>
+                    <span class="status-online">✅ Port 9201</span>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>🤖 Active Agents</h3>
+                <div class="status-item terminal-text">
+                    <span><div class="agent-indicator"></div>CodeLLM Agent</span>
+                    <span class="status-online">READY</span>
+                </div>
+                <div class="status-item terminal-text">
+                    <span><div class="agent-indicator"></div>Asset Generator</span>
+                    <span class="status-online">STANDBY</span>
+                </div>
+                <div class="status-item terminal-text">
+                    <span><div class="agent-indicator"></div>Security Monitor</span>
+                    <span class="status-online">ACTIVE</span>
+                </div>
+                <div class="status-item terminal-text">
+                    <span><div class="agent-indicator"></div>LEAP Integrator</span>
+                    <span class="status-warning">PENDING</span>
+                </div>
+                <div class="status-item terminal-text">
+                    <span><div class="agent-indicator"></div>State Machine</span>
+                    <span class="status-online">RUNNING</span>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>📊 Metrics</h3>
+                <div>
+                    <div>Active Processes</div>
+                    <div class="metric pulse">5</div>
+                </div>
+                <div>
+                    <div>Memory Usage</div>
+                    <div class="metric">2.1GB</div>
+                </div>
+                <div>
+                    <div>Uptime</div>
+                    <div class="metric pulse">00:15:32</div>
+                </div>
+                <div>
+                    <div>Requests/min</div>
+                    <div class="metric">47</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>🔐 Autonomous Resource Management • 🌐 Multi-Model Routing • 📈 Real-time Analytics</div>
+            <div style="margin-top: 10px; font-size: 0.9em;">System Time: <span id="systemTime"></span> | Last Update: <span id="lastUpdate"></span></div>
+        </div>
+    </div>
+    
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(12, 12, 12, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff88';
+            ctx.font = fontSize + 'px Courier New';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 50);
+        
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('systemTime').textContent = now.toLocaleTimeString();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString();
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Simulate real-time updates
+        let requestCounter = 47;
+        setInterval(() => {
+            requestCounter += Math.floor(Math.random() * 10) - 5;
+            if (requestCounter < 0) requestCounter = 0;
+            const metrics = document.querySelectorAll('.metric');
+            if (metrics[3]) {
+                metrics[3].textContent = requestCounter;
+            }
+        }, 2000);
+        
+        // Window resize handling
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

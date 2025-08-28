@@ -1,0 +1,28 @@
+[Unit]
+Description=KI Agent Redis Cache Service
+Documentation=https://redis.io/documentation
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/ki-agent/data/redis
+
+[Service]
+Type=forking
+User=root
+ExecStartPre=/usr/bin/docker stop ki-agent-redis || true
+ExecStartPre=/usr/bin/docker rm ki-agent-redis || true
+ExecStart=/usr/bin/docker run -d \
+  --name ki-agent-redis \
+  --restart unless-stopped \
+  -p 6380:6379 \
+  -v /opt/ki-agent/data/redis:/data \
+  -v /opt/ki-agent/configs/redis.conf:/usr/local/etc/redis/redis.conf \
+  redis:7-alpine redis-server /usr/local/etc/redis/redis.conf
+ExecStop=/usr/bin/docker stop ki-agent-redis
+ExecReload=/usr/bin/docker restart ki-agent-redis
+Restart=always
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

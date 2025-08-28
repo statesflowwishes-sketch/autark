@@ -1,0 +1,40 @@
+[Unit]
+Description=KI Agent Orchestrator Main Service
+Documentation=file:///opt/ki-agent/docs/
+Wants=network-online.target
+After=network-online.target ki-agent-postgres.service ki-agent-redis.service ki-agent-qdrant.service ki-agent-mongo.service
+Requires=ki-agent-postgres.service ki-agent-redis.service ki-agent-qdrant.service
+
+[Service]
+Type=exec
+User=ki-agent
+Group=ki-agent
+WorkingDirectory=/opt/ki-agent
+Environment=POSTGRES_URL=postgresql://ki_agent:SecureKIAgent2025!@localhost:5433/ki_agent_db
+Environment=REDIS_URL=redis://:SecureKIAgent2025!@localhost:6380
+Environment=QDRANT_URL=http://localhost:6334
+Environment=MONGO_URL=mongodb://ki_agent:SecureKIAgent2025!@localhost:27018/ki_agent
+Environment=ELASTICSEARCH_URL=http://localhost:9201
+Environment=PYTHONPATH=/opt/ki-agent
+Environment=CONFIG_PATH=/opt/ki-agent/config
+ExecStartPre=/bin/bash -c 'until pg_isready -h localhost -p 5433; do sleep 2; done'
+ExecStartPre=/bin/bash -c 'until redis-cli -h localhost -p 6380 -a SecureKIAgent2025! ping; do sleep 2; done'
+ExecStart=/opt/ki-agent/venv/bin/python -m orchestrator.main
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ki-agent-orchestrator
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/ki-agent/data /opt/ki-agent/logs
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

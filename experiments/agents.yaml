@@ -1,0 +1,16 @@
+agents:
+  codellm:
+    type: codellm_cli
+    binary: /usr/local/bin/codellm
+  aider:
+    type: aider_cli
+    binary: /usr/local/bin/aider
+  opendevin:
+    type: http_api
+    endpoint: http://opendevin-runner:8000
+  swe-agent:
+    type: python_module
+    module: swe_agent.runner
+defaults:
+  sandbox: "container"
+  max_iterations: 8

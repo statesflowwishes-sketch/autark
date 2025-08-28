@@ -1,0 +1,217 @@
+version: "3.9"
+
+networks:
+  ki-agent-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  mongo_data:
+  elasticsearch_data:
+
+services:
+  # PostgreSQL - Audit & Metadaten
+  postgres:
+    image: postgres:15-alpine
+    container_name: ki-agent-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ki_agent
+      POSTGRES_PASSWORD: SecureKIAgent2025!
+      POSTGRES_DB: ki_agent_db
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+      - ./database/postgres.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - ki-agent-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ki_agent -d ki_agent_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis - Caching & Sessions
+  redis:
+    image: redis:7-alpine
+    container_name: ki-agent-redis-dev
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+      - ./database/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - ki-agent-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Qdrant - Vector Database
+  qdrant:
+    image: qdrant/qdrant:v1.10.0
+    container_name: ki-agent-qdrant-dev
+    restart: unless-stopped
+    ports:
+      - "6334:6333"
+      - "6335:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - ki-agent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MongoDB - Document Storage
+  mongo:
+    image: mongo:7
+    container_name: ki-agent-mongo-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ki_agent
+      MONGO_INITDB_ROOT_PASSWORD: SecureKIAgent2025!
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ki-agent-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Elasticsearch - Search & Analytics
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: ki-agent-elasticsearch-dev
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+      - cluster.name=ki-agent-cluster
+      - node.name=ki-agent-node
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - ki-agent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # KI Agent Orchestrator
+  orchestrator:
+    build:
+      context: .
+      dockerfile: orchestrator/Dockerfile
+    container_name: ki-agent-orchestrator-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_URL: postgresql://ki_agent:SecureKIAgent2025!@postgres:5432/ki_agent_db
+      REDIS_URL: redis://:SecureKIAgent2025!@redis:6379
+      QDRANT_URL: http://qdrant:6333
+      MONGO_URL: mongodb://ki_agent:SecureKIAgent2025!@mongo:27017/ki_agent
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      PYTHONPATH: /app
+      LOG_LEVEL: DEBUG
+      ENVIRONMENT: development
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - ./logs:/app/logs
+    networks:
+      - ki-agent-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
+  # Agent Planner Service
+  planner:
+    build:
+      context: .
+      dockerfile: planner/Dockerfile
+    container_name: ki-agent-planner-dev
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://:SecureKIAgent2025!@redis:6379
+      POSTGRES_URL: postgresql://ki_agent:SecureKIAgent2025!@postgres:5432/ki_agent_db
+      LOG_LEVEL: DEBUG
+    networks:
+      - ki-agent-network
+    depends_on:
+      - redis
+      - postgres
+
+  # Overlay Gateway (UI/API)
+  overlay-gateway:
+    build:
+      context: .
+      dockerfile: overlay/Dockerfile
+    container_name: ki-agent-overlay-dev
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      REDIS_URL: redis://:SecureKIAgent2025!@redis:6379
+      POSTGRES_URL: postgresql://ki_agent:SecureKIAgent2025!@postgres:5432/ki_agent_db
+      NODE_ENV: development
+    volumes:
+      - ./overlay:/app
+    networks:
+      - ki-agent-network
+    depends_on:
+      - redis
+      - postgres
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: ki-agent-prometheus-dev
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ki-agent-network
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: ki-agent-grafana-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    networks:
+      - ki-agent-network

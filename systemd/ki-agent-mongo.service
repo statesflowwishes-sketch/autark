@@ -1,0 +1,29 @@
+[Unit]
+Description=KI Agent MongoDB Document Database Service
+Documentation=https://docs.mongodb.com/
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/ki-agent/data/mongo
+
+[Service]
+Type=forking
+User=root
+ExecStartPre=/usr/bin/docker stop ki-agent-mongo || true
+ExecStartPre=/usr/bin/docker rm ki-agent-mongo || true
+ExecStart=/usr/bin/docker run -d \
+  --name ki-agent-mongo \
+  --restart unless-stopped \
+  -e MONGO_INITDB_ROOT_USERNAME=ki_agent \
+  -e MONGO_INITDB_ROOT_PASSWORD=SecureKIAgent2025! \
+  -p 27018:27017 \
+  -v /opt/ki-agent/data/mongo:/data/db \
+  mongo:7
+ExecStop=/usr/bin/docker stop ki-agent-mongo
+ExecReload=/usr/bin/docker restart ki-agent-mongo
+Restart=always
+RestartSec=10
+TimeoutStartSec=90
+TimeoutStopSec=45
+
+[Install]
+WantedBy=multi-user.target

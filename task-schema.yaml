@@ -1,0 +1,31 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: CodingTask
+type: object
+required: [id, goal, repo, mode]
+properties:
+  id:
+    type: string
+  goal:
+    type: string
+    description: "Hohe Ebene Zielbeschreibung"
+  acceptance_criteria:
+    type: array
+    items: { type: string }
+  repo:
+    type: object
+    required: [url, branch]
+    properties:
+      url: { type: string }
+      branch: { type: string }
+  mode:
+    type: string
+    enum: [refactor, new_feature, bugfix, app_generation]
+  constraints:
+    type: object
+    properties:
+      max_iterations: { type: integer, default: 8 }
+      cost_budget_usd: { type: number, default: 5.0 }
+      time_budget_minutes: { type: integer, default: 60 }
+  deploy:
+    type: boolean
+    default: false

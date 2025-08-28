@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "provider": "leap",
+      "id": "leap:fine-tuned-commit-style",
+      "base": "utility-llm",
+      "version": "2025-08-26-001",
+      "created_at": "2025-08-26T00:00:00Z",
+      "purpose": "Commit message stylistic alignment"
+    }
+  ]
+}

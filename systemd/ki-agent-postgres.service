@@ -1,0 +1,31 @@
+[Unit]
+Description=KI Agent PostgreSQL Database Service
+Documentation=https://www.postgresql.org/docs/
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/ki-agent/data/postgres
+
+[Service]
+Type=forking
+User=root
+ExecStartPre=/usr/bin/docker stop ki-agent-postgres || true
+ExecStartPre=/usr/bin/docker rm ki-agent-postgres || true
+ExecStart=/usr/bin/docker run -d \
+  --name ki-agent-postgres \
+  --restart unless-stopped \
+  -e POSTGRES_USER=ki_agent \
+  -e POSTGRES_PASSWORD=SecureKIAgent2025! \
+  -e POSTGRES_DB=ki_agent_db \
+  -p 5433:5432 \
+  -v /opt/ki-agent/data/postgres:/var/lib/postgresql/data \
+  -v /opt/ki-agent/configs/postgres.conf:/etc/postgresql/postgresql.conf \
+  postgres:15-alpine
+ExecStop=/usr/bin/docker stop ki-agent-postgres
+ExecReload=/usr/bin/docker restart ki-agent-postgres
+Restart=always
+RestartSec=10
+TimeoutStartSec=120
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

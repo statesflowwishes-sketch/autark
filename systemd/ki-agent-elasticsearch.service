@@ -1,0 +1,31 @@
+[Unit]
+Description=KI Agent Elasticsearch Search & Analytics Service
+Documentation=https://www.elastic.co/guide/
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/ki-agent/data/elasticsearch
+
+[Service]
+Type=forking
+User=root
+ExecStartPre=/usr/bin/docker stop ki-agent-elasticsearch || true
+ExecStartPre=/usr/bin/docker rm ki-agent-elasticsearch || true
+ExecStart=/usr/bin/docker run -d \
+  --name ki-agent-elasticsearch \
+  --restart unless-stopped \
+  -e "discovery.type=single-node" \
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+  -e "xpack.security.enabled=false" \
+  -p 9201:9200 \
+  -p 9301:9300 \
+  -v /opt/ki-agent/data/elasticsearch:/usr/share/elasticsearch/data \
+  elasticsearch:8.11.0
+ExecStop=/usr/bin/docker stop ki-agent-elasticsearch
+ExecReload=/usr/bin/docker restart ki-agent-elasticsearch
+Restart=always
+RestartSec=15
+TimeoutStartSec=180
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

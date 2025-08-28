@@ -1,0 +1,616 @@
+# Vollständig ausgefüllte Konfigurationsdatei für Multi-Agent / Multi-Model Autark-Orchestrierung
+# Sprache: Deutsch (Kommentare), strukturierte YAML für maschinelle Verarbeitung.
+# Ziel: Einheitliches Registry für Agents, Strategien, Phasen-Hooks, Sicherheits- & Kosten-Policies.
+
+version: "1.0.0"
+
+metadata:
+  system_name: "autark-code-orchestrator"
+  generated_at: "2025-08-26T08:41:09Z"
+  maintainer: "Platform Engineering"
+  environment: "prod"          # prod | staging | dev
+  schema_version: "2025-08-01"
+
+defaults:
+  max_iterations: 8
+  planning_model: "planner:leap.utility"
+  retry_backoff_sec: [5, 15, 30]
+  locale: "de-DE"
+  code_style_profile: "default"
+  secure_mode: true
+  test_command: "pytest -q"
+  git:
+    commit_signing: true
+    base_branch: "main"
+  context:
+    max_files_primary: 35
+    max_files_extended: 120
+    embedding_batch_size: 32
+    embedding_strategy: "semantic+symbol"
+  memory:
+    enable_long_term: true
+    provider: "vectordb:qdrant"
+    ttl_days: 30
+
+sandbox_tiers:
+  # Definition der Ausführungsumgebungen
+  low:
+    isolation: "container"
+    network_policy: "restricted"
+    allow_shell: false
+  medium:
+    isolation: "container"
+    network_policy: "egress-allowlist"
+    allow_shell: true
+    cpu_limit: "2"
+    memory_limit: "4Gi"
+  high:
+    isolation: "microvm"        # z.B. Firecracker / gVisor
+    network_policy: "egress-min"
+    allow_shell: true
+    cpu_limit: "4"
+    memory_limit: "8Gi"
+    file_write_guard: true
+  elevated:
+    isolation: "microvm"
+    network_policy: "none-except-model"
+    allow_shell: false
+    file_write_guard: true
+    privileged_tools: false
+
+security_policies:
+  secret_redaction: true
+  allow_external_for_confidential: false
+  max_patch_size_lines: 2500
+  max_added_files: 40
+  forbidden_patterns:
+    - "(?i)AWS_SECRET_ACCESS_KEY"
+    - "(?i)BEGIN RSA PRIVATE KEY"
+    - "(?i)password\\s*="
+  command_allowlist:
+    - "^git (status|add|commit|diff|restore|checkout|mv|rm)"
+    - "^pytest( |$)"
+    - "^npm (install|run build|test)"
+    - "^pnpm (install|build|test)"
+    - "^pip install"
+    - "^poetry (install|run)"
+    - "^mvn (clean|test|package)"
+    - "^gradle( |$)"
+    - "^ls( |$)"
+    - "^cat "
+    - "^python "
+  escalation_rules:
+    large_refactor:
+      require_human_approval: true
+      diff_threshold_lines: 1200
+    dependency_change:
+      require_security_scan: true
+    new_binary_file:
+      block_until_review: true
+
+cost_policies:
+  currency: "USD"
+  budgets:
+    task_default: 10.0
+    refactor_large: 18.0
+    feature_medium: 12.0
+  alerts:
+    soft_threshold_ratio: 0.8
+    hard_stop_ratio: 1.05
+  provider_overrides:
+    coddellm: { usd_token_estimate: 0.000020 }
+    leap: { usd_request_flat: 0.002 }
+    openai: { usd_token_estimate: 0.000025 }
+    anthropic: { usd_token_estimate: 0.000028 }
+    local: { usd_token_estimate: 0.000002 }
+  amplification_penalty_factor: 1.15   # Aufschlag bei Chain-of-Thought (wenn aktiviert)
+  cost_cache_ttl_sec: 7200
+
+telemetry:
+  open_telemetry: true
+  trace_sampling: 0.25
+  redact_prompts_in_traces: true
+  metrics_namespace: "autark_agents"
+  audit_log_level: "diff+prompt-hash"
+
+agents:
+  # Primärer Ensemble / Routing Agent
+  codellm_auto:
+    type: "cli"
+    provider: "coddellm"
+    binary: "/usr/local/bin/codellm"
+    models_supported: ["coddellm:auto", "coddellm:gpt5", "coddellm:sonnet4"]
+    capabilities: ["code_gen","multi_file_refactor","planning_assist","debug"]
+    security_tier: "medium"
+    chain_of_thought: "condensed"
+    max_context_tokens: 64000
+    heuristics:
+      prefer_for: ["complex_refactor","multi_language","app_scaffold"]
+      avoid_for: ["quick_commit_msg"]
+    fallback_agents: ["wizardcoder_local","codestral_local"]
+    cost_profile: "provider:coddellm"
+
+  aider_cli:
+    type: "cli"
+    provider: "aider"
+    binary: "/usr/local/bin/aider"
+    capabilities: ["patch_refine","multi_file_edit"]
+    security_tier: "medium"
+    max_context_tokens: 32768
+    heuristics:
+      prefer_for: ["precise_patch","small_refactor"]
+    fallback_agents: ["codellm_auto"]
+    cost_profile: "provider:local"
+
+  opendevin:
+    type: "service"
+    provider: "opendevin"
+    endpoint: "http://opendevin-runner:8000/api"
+    capabilities: ["environment_sim","browser","shell_sequence","planning"]
+    security_tier: "high"
+    allow_shell: true
+    heuristics:
+      prefer_for: ["exploratory_diagnostics","env_bootstrap"]
+    max_runtime_sec: 2700
+    fallback_agents: []
+
+  swe_agent:
+    type: "python_module"
+    provider: "swe-agent"
+    module: "swe_agent.runner"
+    capabilities: ["bugfix","issue_to_patch"]
+    security_tier: "medium"
+    heuristics:
+      prefer_for: ["bugfix"]
+    max_iterations: 6
+    fallback_agents: ["aider_cli"]
+
+  leap_utility:
+    type: "saas"
+    provider: "leap"
+    endpoint: "https://api.leap.new/v1/chat/completions"
+    model: "utility-llm"
+    capabilities: ["summary","drafting","light_reason"]
+    security_tier: "elevated"
+    redact_source_before_send: true
+    max_context_tokens: 16000
+    fallback_agents: ["codellm_auto"]
+
+  leap_embeddings:
+    type: "saas"
+    provider: "leap"
+    endpoint: "https://api.leap.new/v1/embeddings"
+    model: "embed-v1"
+    capabilities: ["embedding"]
+    batching: 32
+    security_tier: "elevated"
+    fallback_agents: ["allminilm_local"]
+
+  leap_image:
+    type: "saas"
+    provider: "leap"
+    endpoint: "https://api.leap.new/v1/images/generations"
+    model: "image-gen-v2"
+    capabilities: ["image_asset"]
+    security_tier: "elevated"
+    redact_source_before_send: true
+    policy_flags: ["no_confidential"]
+    fallback_agents: ["stable_diffusion_local"]
+
+  wizardcoder_local:
+    type: "local_model"
+    provider: "local"
+    engine: "vllm"
+    model: "wizardcoder-15b-q4"
+    capabilities: ["code_gen","refactor_light"]
+    security_tier: "low"
+    max_context_tokens: 16384
+    quantization: "int4"
+    fallback_agents: ["codestral_local"]
+
+  codestral_local:
+    type: "local_model"
+    provider: "local"
+    engine: "tgi"
+    model: "mistral-codestral"
+    capabilities: ["code_gen"]
+    security_tier: "low"
+    max_context_tokens: 32768
+    fallback_agents: ["qwen_coder_local"]
+
+  qwen_coder_local:
+    type: "local_model"
+    provider: "local"
+    engine: "vllm"
+    model: "qwen3-coder-14b"
+    capabilities: ["code_gen"]
+    security_tier: "low"
+    max_context_tokens: 65536
+    fallback_agents: ["starcoder2_local"]
+
+  starcoder2_local:
+    type: "local_model"
+    provider: "local"
+    engine: "tgi"
+    model: "starcoder2-15b"
+    capabilities: ["code_gen"]
+    security_tier: "low"
+    max_context_tokens: 32768
+    fallback_agents: []
+
+  openai_reason:
+    type: "saas"
+    provider: "openai"
+    endpoint: "https://api.openai.com/v1/chat/completions"
+    model: "o4-reasoning"
+    capabilities: ["deep_reason","analysis"]
+    security_tier: "elevated"
+    chain_of_thought: "hidden"
+    max_context_tokens: 200000
+    fallback_agents: ["anthropic_sonnet"]
+
+  anthropic_sonnet:
+    type: "saas"
+    provider: "anthropic"
+    endpoint: "https://api.anthropic.com/v1/messages"
+    model: "claude-3.5-sonnet"
+    capabilities: ["deep_reason","long_context"]
+    security_tier: "elevated"
+    max_context_tokens: 200000
+    fallback_agents: ["openai_reason"]
+
+  sourcery_refactor:
+    type: "cli"
+    provider: "sourcery"
+    binary: "/usr/local/bin/sourcery"
+    capabilities: ["refactor_suggestions","lint"]
+    security_tier: "low"
+    phase: "post_patch"
+    fallback_agents: []
+
+  codium_tests:
+    type: "saas"
+    provider: "codium"
+    endpoint: "https://api.codium.ai/v1/tests"
+    capabilities: ["test_generation"]
+    security_tier: "elevated"
+    policy_flags: ["no_confidential"]
+    fallback_agents: ["pynguin_local"]
+
+  pynguin_local:
+    type: "cli"
+    provider: "pynguin"
+    binary: "/usr/local/bin/pynguin"
+    capabilities: ["test_generation"]
+    security_tier: "medium"
+    lang: "python"
+    fallback_agents: []
+
+  diffblue_cover:
+    type: "saas"
+    provider: "diffblue"
+    endpoint: "https://api.diffblue.com/v1/tests"
+    capabilities: ["test_generation"]
+    security_tier: "elevated"
+    lang: "java"
+    policy_flags: ["no_confidential"]
+    fallback_agents: []
+
+  sonar_ai_fix:
+    type: "saas"
+    provider: "sonarsource"
+    endpoint: "https://api.sonarcloud.io/ai/fix"
+    capabilities: ["security_fix","quality_fix"]
+    security_tier: "elevated"
+    phase: "quality_gate"
+    fallback_agents: []
+
+  opencommit_cli:
+    type: "cli"
+    provider: "opencommit"
+    binary: "/usr/local/bin/opencommit"
+    capabilities: ["commit_message"]
+    security_tier: "low"
+    phase: "pre_commit"
+    fallback_agents: ["aicommit_cli"]
+
+  aicommit_cli:
+    type: "cli"
+    provider: "aicommit"
+    binary: "/usr/local/bin/aicommit"
+    capabilities: ["commit_message"]
+    security_tier: "low"
+    phase: "pre_commit"
+    fallback_agents: ["leap_utility"]
+
+  stable_diffusion_local:
+    type: "local_model"
+    provider: "local"
+    engine: "comfyui"
+    model: "sdxl-base"
+    capabilities: ["image_asset"]
+    security_tier: "high"
+    gpu: true
+    fallback_agents: []
+
+  allminilm_local:
+    type: "local_model"
+    provider: "local"
+    engine: "embedding"
+    model: "all-MiniLM-L6-v2"
+    capabilities: ["embedding"]
+    security_tier: "low"
+    fallback_agents: []
+
+  # Reviewer / Critic Agent (LLM)
+  critic_reasoner:
+    type: "chain"
+    chain:
+      - { provider: "anthropic", model: "claude-3.5-sonnet", role: "analysis" }
+      - { provider: "openai", model: "o4-reasoning", role: "verification" }
+    capabilities: ["critique","spec_check"]
+    security_tier: "elevated"
+    max_context_tokens: 64000
+
+strategies:
+  # Ausführungs- und Auswahlstrategien pro Task-Typ
+  bugfix:
+    candidates: ["swe_agent","aider_cli","codellm_auto"]
+    selection: "balanced_random"
+    context_mode: "focused"
+    max_iterations: 6
+
+  small_refactor:
+    primary: "aider_cli"
+    fallback: ["codellm_auto"]
+    context_mode: "focused"
+    refine_chain: ["sourcery_refactor","critic_reasoner"]
+
+  large_refactor:
+    primary: "codellm_auto"
+    deep_reason_agent: "openai_reason"
+    fallback: ["anthropic_sonnet","wizardcoder_local"]
+    context_mode: "broad"
+    approval_gate: true
+    max_iterations: 10
+
+  app_generation:
+    chain:
+      - { agent: "codellm_auto", role: "scaffold" }
+      - { agent: "codellm_auto", role: "implement" }
+      - { agent: "codium_tests", role: "tests" }
+      - { agent: "critic_reasoner", role: "review" }
+    fallback_last: "wizardcoder_local"
+    max_iterations: 9
+
+  readme_draft:
+    chain:
+      - { agent: "leap_utility", role: "draft" }
+      - { agent: "codellm_auto", role: "refine" }
+    style_enforcer: "critic_reasoner"
+
+  commit_message:
+    primary: "opencommit_cli"
+    fallback: ["aicommit_cli","leap_utility"]
+
+  test_generation_python:
+    priority_order: ["codium_tests","pynguin_local","codellm_auto"]
+    coverage_target: 0.75
+
+  test_generation_java:
+    priority_order: ["diffblue_cover","codellm_auto"]
+
+  security_fix:
+    chain:
+      - { agent: "sonar_ai_fix", role: "suggest" }
+      - { agent: "codellm_auto", role: "refine" }
+      - { agent: "critic_reasoner", role: "verify" }
+
+  embeddings:
+    primary: "leap_embeddings"
+    fallback: ["allminilm_local"]
+
+  image_asset:
+    primary: "leap_image"
+    fallback: ["stable_diffusion_local"]
+    prompt_sanitizer: true
+
+  dual_debate_refactor:
+    parallel:
+      - { agent: "codellm_auto", role: "solution_a" }
+      - { agent: "aider_cli", role: "solution_b" }
+    evaluation_agent: "critic_reasoner"
+    merge_policy: "best_tests_then_lint"
+
+phase_hooks:
+  # Definiert, welche Agents oder Tools in welcher Pipeline-Phase automatisch getriggert werden.
+  plan:
+    planner_agent: "leap_utility"
+    critic: "critic_reasoner"
+  code_iteration:
+    pre:
+      - "sourcery_refactor"
+    post:
+      - "critic_reasoner"
+  test:
+    generators:
+      - "codium_tests"
+      - "pynguin_local"
+  quality_gate:
+    checks:
+      - "sonar_ai_fix"
+      - "sourcery_refactor"
+  pre_commit:
+    sequence:
+      - "opencommit_cli"
+      - "aicommit_cli"
+  post_merge:
+    actions:
+      - "embeddings"    # Neu-Index falls signifikante Änderungen
+      - "readme_draft"  # Optional README Refresh Flag
+  asset:
+    image_provider: "image_asset"
+
+governance_rules:
+  change_classification:
+    minor:
+      max_lines: 120
+      require_approval: false
+    moderate:
+      max_lines: 600
+      require_approval: false
+    major:
+      max_lines: 2000
+      require_approval: true
+    epic:
+      max_lines: 4000
+      require_approval: true
+      force_strategy: "dual_debate_refactor"
+  confidential_project:
+    disallow_agents:
+      - "leap_image"
+      - "codium_tests"
+      - "diffblue_cover"
+      - "leap_utility"
+      - "leap_embeddings"   # Optional je nach Policy
+    force_local_embeddings: true
+
+risk_scoring:
+  weights:
+    files_core: 3
+    security_sensitive: 5
+    migration_files: 4
+    test_files: 1
+    dependency_manifest: 4
+  thresholds:
+    medium: 8
+    high: 15
+    critical: 22
+  mitigations:
+    high:
+      add_review_agent: "critic_reasoner"
+      reduce_parallelism: true
+    critical:
+      require_human_plan_approval: true
+      restrict_to_primary_agent: "codellm_auto"
+
+observability:
+  log_channels:
+    - "agent_runs"
+    - "cost_events"
+    - "security_flags"
+    - "diff_summaries"
+  redact_fields:
+    - "prompt"
+    - "raw_diff"
+  store_prompt_hashes: true
+  metrics:
+    enabled: true
+    exporters:
+      - "prometheus"
+  anomaly_detection:
+    enabled: true
+    heuristics:
+      excessive_iterations: { threshold: 1.5 }   # 150% des Median
+      cost_spike_factor: 2.0
+      hallucination_retry_rate: 0.2
+
+escalation:
+  contact:
+    primary_slack_channel: "#ai-code-ops"
+    oncall_role: "platform-ai"
+  triggers:
+    - name: "security_violation"
+      condition: "security_flags > 0"
+    - name: "budget_exceeded"
+      condition: "cost_ratio > 1.05"
+    - name: "high_regression"
+      condition: "regression_tests_failed > 3"
+    - name: "policy_blocked"
+      condition: "blocked_actions > 0"
+  responses:
+    security_violation:
+      actions: ["halt_task","notify_oncall","archive_context"]
+    budget_exceeded:
+      actions: ["halt_task","notify_oncall"]
+    high_regression:
+      actions: ["inject_test_generation","notify_channel"]
+    policy_blocked:
+      actions: ["halt_task","notify_channel"]
+
+evaluation:
+  benchmark_suite:
+    enabled: true
+    dataset_path: "benchmarks/tasks_40.yaml"
+    agents_under_test:
+      - "codellm_auto"
+      - "aider_cli"
+      - "wizardcoder_local"
+      - "openai_reason"
+    metrics:
+      - "time_to_green"
+      - "iterations"
+      - "cost_usd"
+      - "success_rate"
+      - "edit_precision"
+      - "regressions"
+      - "hallucination_events"
+      - "security_flags"
+    statistical_tests:
+      success_rate: "mann_whitney_u"
+      iterations: "cliffs_delta"
+    min_effect_size:
+      success_rate: 0.07
+      iterations: 0.1
+    store_raw_results: true
+    output_dir: "benchmarks/results"
+
+tuning:
+  temperature_defaults:
+    code_gen: 0.2
+    refactor: 0.15
+    test_generation: 0.35
+    summary: 0.3
+    deep_reason: 0.0
+  top_p_defaults:
+    code_gen: 0.95
+    test_generation: 0.9
+  repetition_penalty: 1.05
+  max_tokens_limits:
+    code_gen: 4096
+    deep_reason: 8192
+    summary: 1024
+
+prompt_policies:
+  include_system_guidelines: true
+  system_guidelines:
+    - "Halte dich strikt an existierende Code-Stile."
+    - "Führe keine irrelevanten Änderungen aus."
+    - "Markiere Annahmen klar; frage nach, falls kritisch unklar."
+  redaction_markers:
+    secret: "[REDACTED_SECRET]"
+    code_block_removed: "[CODE_REMOVED]"
+  chain_of_thought_mode: "internal_only"
+
+integrity_checks:
+  pre_execution:
+    - "sandbox_enforced"
+    - "agent_registered"
+    - "budget_remaining"
+  post_patch:
+    - "lint_clean"
+    - "no_secret_leak"
+    - "tests_not_decreased"
+  pre_commit:
+    - "no_policy_violations"
+    - "coverage_threshold_met"
+
+cleanup:
+  ephemeral_workspaces: true
+  retention_days:
+    logs: 30
+    audits: 180
+    embeddings: 45
+    overlay_streams: 14
+
+# Ende der agents.yaml

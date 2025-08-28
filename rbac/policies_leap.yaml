@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: leap-policy
+data:
+  external_asset_allowed: "true"
+  deny_confidential_flag: "true"

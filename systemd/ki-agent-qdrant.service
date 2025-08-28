@@ -1,0 +1,28 @@
+[Unit]
+Description=KI Agent Qdrant Vector Database Service
+Documentation=https://qdrant.tech/documentation/
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/opt/ki-agent/data/qdrant
+
+[Service]
+Type=forking
+User=root
+ExecStartPre=/usr/bin/docker stop ki-agent-qdrant || true
+ExecStartPre=/usr/bin/docker rm ki-agent-qdrant || true
+ExecStart=/usr/bin/docker run -d \
+  --name ki-agent-qdrant \
+  --restart unless-stopped \
+  -p 6334:6333 \
+  -p 6335:6334 \
+  -v /opt/ki-agent/data/qdrant:/qdrant/storage \
+  qdrant/qdrant:v1.10.0
+ExecStop=/usr/bin/docker stop ki-agent-qdrant
+ExecReload=/usr/bin/docker restart ki-agent-qdrant
+Restart=always
+RestartSec=10
+TimeoutStartSec=90
+TimeoutStopSec=45
+
+[Install]
+WantedBy=multi-user.target

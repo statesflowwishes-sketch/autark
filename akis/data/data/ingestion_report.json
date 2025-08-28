@@ -1,0 +1,47 @@
+{
+  "ingestion_summary": {
+    "tools_processed": 2,
+    "capabilities_processed": 6,
+    "documents_processed": 0,
+    "concepts_extracted": 0
+  },
+  "tool_overview": [
+    {
+      "tool_id": "video_ai_pipeline",
+      "name": "AUTARK Video AI Pipeline",
+      "version": "1.0.0",
+      "capabilities_count": 3,
+      "risk_level": "medium",
+      "compliance_tags": [
+        "gdpr",
+        "privacy",
+        "content_policy"
+      ]
+    },
+    {
+      "tool_id": "knowledge_integration",
+      "name": "AUTARK Knowledge Integration System",
+      "version": "1.0.0",
+      "capabilities_count": 3,
+      "risk_level": "low",
+      "compliance_tags": [
+        "privacy",
+        "data_governance",
+        "eu_ai_act"
+      ]
+    }
+  ],
+  "capability_maturity_distribution": {
+    "AWARENESS": 6
+  },
+  "compliance_coverage": {
+    "gdpr": 1,
+    "privacy": 2,
+    "content_policy": 1,
+    "data_governance": 1,
+    "eu_ai_act": 1
+  },
+  "recommendations": [
+    "Consider adding more tools to increase knowledge coverage"
+  ]
+}

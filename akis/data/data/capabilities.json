@@ -1,0 +1,449 @@
+[
+  {
+    "capability_id": "video_generation",
+    "name": "video_generation",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "video",
+      "ai",
+      "generation",
+      "remotion",
+      "moviepy"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "video_generation_profile_v1",
+    "maturity_profile": {
+      "profile_id": "video_generation_profile_v1",
+      "name": "Maturity Profile video_generation_profile_v1",
+      "description": "Learning curve for video_generation_profile_v1",
+      "levels": [
+        {
+          "level": "MaturityLevel.AWARENESS",
+          "description": "Bewusstsein für Video-AI Tools",
+          "expected_accuracy": 0.6,
+          "max_latency_ms": 30000,
+          "risk_factor": 0.8,
+          "min_evidence_docs": 5,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.BASIC_EXECUTION",
+          "description": "Grundlegende Videogenerierung",
+          "expected_accuracy": 0.75,
+          "max_latency_ms": 20000,
+          "risk_factor": 0.6,
+          "min_evidence_docs": 3,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.EFFICIENT_EXECUTION",
+          "description": "Effiziente Videoproduktion",
+          "expected_accuracy": 0.85,
+          "max_latency_ms": 15000,
+          "risk_factor": 0.4,
+          "min_evidence_docs": 2,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.ADAPTIVE_OPTIMIZATION",
+          "description": "Adaptive Optimierung",
+          "expected_accuracy": 0.92,
+          "max_latency_ms": 10000,
+          "risk_factor": 0.3,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.PREDICTIVE_PROACTIVE",
+          "description": "Prädiktive Videoproduktion",
+          "expected_accuracy": 0.96,
+          "max_latency_ms": 8000,
+          "risk_factor": 0.2,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.AUTONOMOUS_SELF_TUNING",
+          "description": "Autonome Selbstoptimierung",
+          "expected_accuracy": 0.98,
+          "max_latency_ms": 5000,
+          "risk_factor": 0.1,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        }
+      ],
+      "created_at": "2025-08-26 14:33:51.707800",
+      "updated_at": "2025-08-26 14:33:51.707804"
+    },
+    "benchmarks": [
+      {
+        "case_id": "video_gen_quality",
+        "capability_ref": "video_generation",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "quality_score",
+            "target_value": 0.9,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target quality_score for video_generation"
+          },
+          {
+            "name": "generation_time_minutes",
+            "target_value": 5,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target generation_time_minutes for video_generation"
+          },
+          {
+            "name": "success_rate",
+            "target_value": 0.95,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target success_rate for video_generation"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.707824",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  },
+  {
+    "capability_id": "video_editing",
+    "name": "video_editing",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "editing",
+      "effects",
+      "transitions",
+      "audio"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "video_editing_profile_v1",
+    "maturity_profile": null,
+    "benchmarks": [
+      {
+        "case_id": "video_edit_precision",
+        "capability_ref": "video_editing",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "edit_accuracy",
+            "target_value": 0.92,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target edit_accuracy for video_editing"
+          },
+          {
+            "name": "render_time_minutes",
+            "target_value": 3,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target render_time_minutes for video_editing"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.707841",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  },
+  {
+    "capability_id": "tool_orchestration",
+    "name": "tool_orchestration",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "workflow",
+      "pipeline",
+      "automation",
+      "integration"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "orchestration_profile_v1",
+    "maturity_profile": null,
+    "benchmarks": [
+      {
+        "case_id": "tool_coordination",
+        "capability_ref": "tool_orchestration",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "orchestration_success",
+            "target_value": 0.95,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target orchestration_success for tool_orchestration"
+          },
+          {
+            "name": "error_recovery",
+            "target_value": 0.88,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target error_recovery for tool_orchestration"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.707855",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  },
+  {
+    "capability_id": "knowledge_retrieval",
+    "name": "knowledge_retrieval",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "knowledge",
+      "retrieval",
+      "rag",
+      "embeddings",
+      "search"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "knowledge_retrieval_profile_v1",
+    "maturity_profile": {
+      "profile_id": "knowledge_retrieval_profile_v1",
+      "name": "Maturity Profile knowledge_retrieval_profile_v1",
+      "description": "Learning curve for knowledge_retrieval_profile_v1",
+      "levels": [
+        {
+          "level": "MaturityLevel.AWARENESS",
+          "description": "Grundverständnis Knowledge Management",
+          "expected_accuracy": 0.65,
+          "max_latency_ms": 2000,
+          "risk_factor": 0.7,
+          "min_evidence_docs": 4,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.BASIC_EXECUTION",
+          "description": "Basis Knowledge Retrieval",
+          "expected_accuracy": 0.78,
+          "max_latency_ms": 1500,
+          "risk_factor": 0.5,
+          "min_evidence_docs": 3,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.EFFICIENT_EXECUTION",
+          "description": "Effiziente Knowledge Queries",
+          "expected_accuracy": 0.87,
+          "max_latency_ms": 1000,
+          "risk_factor": 0.3,
+          "min_evidence_docs": 2,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.ADAPTIVE_OPTIMIZATION",
+          "description": "Adaptive Knowledge Integration",
+          "expected_accuracy": 0.93,
+          "max_latency_ms": 750,
+          "risk_factor": 0.2,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.PREDICTIVE_PROACTIVE",
+          "description": "Prädiktive Knowledge Discovery",
+          "expected_accuracy": 0.97,
+          "max_latency_ms": 500,
+          "risk_factor": 0.1,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        },
+        {
+          "level": "MaturityLevel.AUTONOMOUS_SELF_TUNING",
+          "description": "Autonome Knowledge Evolution",
+          "expected_accuracy": 0.99,
+          "max_latency_ms": 300,
+          "risk_factor": 0.05,
+          "min_evidence_docs": 1,
+          "required_capabilities": [],
+          "typical_errors": [],
+          "recovery_strategies": []
+        }
+      ],
+      "created_at": "2025-08-26 14:33:51.721857",
+      "updated_at": "2025-08-26 14:33:51.721861"
+    },
+    "benchmarks": [
+      {
+        "case_id": "knowledge_accuracy",
+        "capability_ref": "knowledge_retrieval",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "retrieval_precision",
+            "target_value": 0.92,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target retrieval_precision for knowledge_retrieval"
+          },
+          {
+            "name": "response_time_ms",
+            "target_value": 500,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target response_time_ms for knowledge_retrieval"
+          },
+          {
+            "name": "relevance_score",
+            "target_value": 0.9,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target relevance_score for knowledge_retrieval"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.721873",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  },
+  {
+    "capability_id": "cross_domain_integration",
+    "name": "cross_domain_integration",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "integration",
+      "cross_reference",
+      "domain",
+      "linking"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "cross_domain_profile_v1",
+    "maturity_profile": null,
+    "benchmarks": [
+      {
+        "case_id": "cross_domain_accuracy",
+        "capability_ref": "cross_domain_integration",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "integration_success",
+            "target_value": 0.95,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target integration_success for cross_domain_integration"
+          },
+          {
+            "name": "cross_ref_precision",
+            "target_value": 0.88,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target cross_ref_precision for cross_domain_integration"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.721884",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  },
+  {
+    "capability_id": "learning_curve_optimization",
+    "name": "learning_curve_optimization",
+    "description": "",
+    "domain": "general",
+    "primary_concepts": [
+      "learning",
+      "optimization",
+      "maturity",
+      "skill",
+      "progression"
+    ],
+    "required_inputs": [],
+    "outputs": [],
+    "maturity_profile_id": "learning_optimization_profile_v1",
+    "maturity_profile": null,
+    "benchmarks": [
+      {
+        "case_id": "learning_efficiency",
+        "capability_ref": "learning_curve_optimization",
+        "description": "",
+        "input_data": {},
+        "expected_outcome": null,
+        "target_metrics": [
+          {
+            "name": "optimization_gain",
+            "target_value": 0.85,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target optimization_gain for learning_curve_optimization"
+          },
+          {
+            "name": "skill_progression_rate",
+            "target_value": 0.9,
+            "tolerance": 0.05,
+            "unit": "",
+            "description": "Target skill_progression_rate for learning_curve_optimization"
+          }
+        ],
+        "success_criteria": "",
+        "created_at": "2025-08-26 14:33:51.721893",
+        "last_run": null,
+        "last_result": null
+      }
+    ],
+    "dependencies": [],
+    "tags": []
+  }
+]

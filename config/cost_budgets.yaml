@@ -1,0 +1,13 @@
+services:
+  coddellm:
+    usd_task_budget: 6.0
+    usd_alert_threshold: 5.0
+  leap:
+    usd_task_budget: 2.5
+    usd_alert_threshold: 2.0
+embedding:
+  max_tokens_task: 750000
+image:
+  max_images_task: 25
+policy:
+  deny_external_asset_on_confidential: true

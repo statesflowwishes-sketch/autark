@@ -1,0 +1,14 @@
+default_model: "coddellm:auto"
+strategies:
+  refactor:
+    primary: "coddellm:auto"
+    fallback: ["qwen3coder", "local:starcoder2"]
+  bugfix:
+    primary: "coddellm:auto"
+    force_context_window: 64k
+  app_generation:
+    primary: "coddellm:auto"
+    extended_planning: true
+cost_thresholds:
+  max_tokens_per_iteration: 30000
+  alert_usd_iteration: 1.00

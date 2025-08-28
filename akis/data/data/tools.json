@@ -1,0 +1,359 @@
+[
+  {
+    "tool_id": "video_ai_pipeline",
+    "name": "AUTARK Video AI Pipeline",
+    "version": "1.0.0",
+    "vendor": "AUTARK",
+    "description": "",
+    "capabilities": [
+      "video_generation",
+      "video_editing",
+      "tool_orchestration"
+    ],
+    "compliance_tags": [
+      "ComplianceTag.GDPR",
+      "ComplianceTag.PRIVACY",
+      "ComplianceTag.CONTENT_POLICY"
+    ],
+    "risk_level": "RiskLevel.MEDIUM",
+    "documentation_sources": [
+      {
+        "type": "markdown",
+        "path": "autark_video_ai_pipeline.py"
+      },
+      {
+        "type": "code",
+        "path": "autark_video_ai_pipeline.py"
+      }
+    ],
+    "last_review": "2025-08-26",
+    "created_at": "2025-08-26 14:33:51.700909",
+    "updated_at": "2025-08-26 14:33:51.700912",
+    "metadata": {
+      "tool_id": "video_ai_pipeline",
+      "name": "AUTARK Video AI Pipeline",
+      "version": "1.0.0",
+      "vendor": "AUTARK",
+      "capabilities": [
+        {
+          "id": "video_generation",
+          "maturity_profile": "video_generation_profile_v1",
+          "primary_concepts": [
+            "video",
+            "ai",
+            "generation",
+            "remotion",
+            "moviepy"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "video_gen_quality",
+              "target_metrics": {
+                "quality_score": 0.9,
+                "generation_time_minutes": 5,
+                "success_rate": 0.95
+              }
+            }
+          ]
+        },
+        {
+          "id": "video_editing",
+          "maturity_profile": "video_editing_profile_v1",
+          "primary_concepts": [
+            "editing",
+            "effects",
+            "transitions",
+            "audio"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "video_edit_precision",
+              "target_metrics": {
+                "edit_accuracy": 0.92,
+                "render_time_minutes": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "tool_orchestration",
+          "maturity_profile": "orchestration_profile_v1",
+          "primary_concepts": [
+            "workflow",
+            "pipeline",
+            "automation",
+            "integration"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "tool_coordination",
+              "target_metrics": {
+                "orchestration_success": 0.95,
+                "error_recovery": 0.88
+              }
+            }
+          ]
+        }
+      ],
+      "compliance_tags": [
+        "gdpr",
+        "privacy",
+        "content_policy"
+      ],
+      "documentation_sources": [
+        {
+          "type": "markdown",
+          "path": "autark_video_ai_pipeline.py"
+        },
+        {
+          "type": "code",
+          "path": "autark_video_ai_pipeline.py"
+        }
+      ],
+      "risk_level": "medium",
+      "last_review": "2025-08-26",
+      "maturity_profiles": {
+        "video_generation_profile_v1": [
+          {
+            "level": 0,
+            "description": "Bewusstsein für Video-AI Tools",
+            "expected_accuracy": 0.6,
+            "max_latency_ms": 30000,
+            "risk_factor": 0.8,
+            "min_evidence_docs": 5
+          },
+          {
+            "level": 1,
+            "description": "Grundlegende Videogenerierung",
+            "expected_accuracy": 0.75,
+            "max_latency_ms": 20000,
+            "risk_factor": 0.6,
+            "min_evidence_docs": 3
+          },
+          {
+            "level": 2,
+            "description": "Effiziente Videoproduktion",
+            "expected_accuracy": 0.85,
+            "max_latency_ms": 15000,
+            "risk_factor": 0.4,
+            "min_evidence_docs": 2
+          },
+          {
+            "level": 3,
+            "description": "Adaptive Optimierung",
+            "expected_accuracy": 0.92,
+            "max_latency_ms": 10000,
+            "risk_factor": 0.3,
+            "min_evidence_docs": 1
+          },
+          {
+            "level": 4,
+            "description": "Prädiktive Videoproduktion",
+            "expected_accuracy": 0.96,
+            "max_latency_ms": 8000,
+            "risk_factor": 0.2,
+            "min_evidence_docs": 1
+          },
+          {
+            "level": 5,
+            "description": "Autonome Selbstoptimierung",
+            "expected_accuracy": 0.98,
+            "max_latency_ms": 5000,
+            "risk_factor": 0.1,
+            "min_evidence_docs": 1
+          }
+        ]
+      },
+      "tools_integrated": [
+        "remotion",
+        "moviepy",
+        "manim",
+        "hunyuanvideo",
+        "cogvideo",
+        "stable_video_diffusion",
+        "animatediff",
+        "text2video_zero",
+        "coqui_tts",
+        "bark",
+        "espnet_tts"
+      ]
+    }
+  },
+  {
+    "tool_id": "knowledge_integration",
+    "name": "AUTARK Knowledge Integration System",
+    "version": "1.0.0",
+    "vendor": "AUTARK",
+    "description": "",
+    "capabilities": [
+      "knowledge_retrieval",
+      "cross_domain_integration",
+      "learning_curve_optimization"
+    ],
+    "compliance_tags": [
+      "ComplianceTag.PRIVACY",
+      "ComplianceTag.DATA_GOVERNANCE",
+      "ComplianceTag.EU_AI_ACT"
+    ],
+    "risk_level": "RiskLevel.LOW",
+    "documentation_sources": [
+      {
+        "type": "markdown",
+        "path": "autark_knowledge_integration.py"
+      },
+      {
+        "type": "code",
+        "path": "autark_knowledge_integration.py"
+      }
+    ],
+    "last_review": "2025-08-26",
+    "created_at": "2025-08-26 14:33:51.715169",
+    "updated_at": "2025-08-26 14:33:51.715172",
+    "metadata": {
+      "tool_id": "knowledge_integration",
+      "name": "AUTARK Knowledge Integration System",
+      "version": "1.0.0",
+      "vendor": "AUTARK",
+      "capabilities": [
+        {
+          "id": "knowledge_retrieval",
+          "maturity_profile": "knowledge_retrieval_profile_v1",
+          "primary_concepts": [
+            "knowledge",
+            "retrieval",
+            "rag",
+            "embeddings",
+            "search"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "knowledge_accuracy",
+              "target_metrics": {
+                "retrieval_precision": 0.92,
+                "response_time_ms": 500,
+                "relevance_score": 0.9
+              }
+            }
+          ]
+        },
+        {
+          "id": "cross_domain_integration",
+          "maturity_profile": "cross_domain_profile_v1",
+          "primary_concepts": [
+            "integration",
+            "cross_reference",
+            "domain",
+            "linking"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "cross_domain_accuracy",
+              "target_metrics": {
+                "integration_success": 0.95,
+                "cross_ref_precision": 0.88
+              }
+            }
+          ]
+        },
+        {
+          "id": "learning_curve_optimization",
+          "maturity_profile": "learning_optimization_profile_v1",
+          "primary_concepts": [
+            "learning",
+            "optimization",
+            "maturity",
+            "skill",
+            "progression"
+          ],
+          "benchmarks": [
+            {
+              "case_id": "learning_efficiency",
+              "target_metrics": {
+                "optimization_gain": 0.85,
+                "skill_progression_rate": 0.9
+              }
+            }
+          ]
+        }
+      ],
+      "compliance_tags": [
+        "privacy",
+        "data_governance",
+        "eu_ai_act"
+      ],
+      "documentation_sources": [
+        {
+          "type": "markdown",
+          "path": "autark_knowledge_integration.py"
+        },
+        {
+          "type": "code",
+          "path": "autark_knowledge_integration.py"
+        }
+      ],
+      "risk_level": "low",
+      "last_review": "2025-08-26",
+      "maturity_profiles": {
+        "knowledge_retrieval_profile_v1": [
+          {
+            "level": 0,
+            "description": "Grundverständnis Knowledge Management",
+            "expected_accuracy": 0.65,
+            "max_latency_ms": 2000,
+            "risk_factor": 0.7,
+            "min_evidence_docs": 4
+          },
+          {
+            "level": 1,
+            "description": "Basis Knowledge Retrieval",
+            "expected_accuracy": 0.78,
+            "max_latency_ms": 1500,
+            "risk_factor": 0.5,
+            "min_evidence_docs": 3
+          },
+          {
+            "level": 2,
+            "description": "Effiziente Knowledge Queries",
+            "expected_accuracy": 0.87,
+            "max_latency_ms": 1000,
+            "risk_factor": 0.3,
+            "min_evidence_docs": 2
+          },
+          {
+            "level": 3,
+            "description": "Adaptive Knowledge Integration",
+            "expected_accuracy": 0.93,
+            "max_latency_ms": 750,
+            "risk_factor": 0.2,
+            "min_evidence_docs": 1
+          },
+          {
+            "level": 4,
+            "description": "Prädiktive Knowledge Discovery",
+            "expected_accuracy": 0.97,
+            "max_latency_ms": 500,
+            "risk_factor": 0.1,
+            "min_evidence_docs": 1
+          },
+          {
+            "level": 5,
+            "description": "Autonome Knowledge Evolution",
+            "expected_accuracy": 0.99,
+            "max_latency_ms": 300,
+            "risk_factor": 0.05,
+            "min_evidence_docs": 1
+          }
+        ]
+      },
+      "domains_covered": [
+        "video_processing",
+        "data_management",
+        "agent_coordination",
+        "visualization",
+        "system_coordination",
+        "development_environment",
+        "cloud_services"
+      ]
+    }
+  }
+]
