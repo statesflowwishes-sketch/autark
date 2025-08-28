@@ -10,7 +10,7 @@ echo "=========================================="
 
 # Configuration
 REPO_URL="https://github.com/statesflowwishes-sketch/autark.git"
-GITHUB_TOKEN="${GITHUB_TOKEN:-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}"
+GITHUB_TOKEN="${GITHUB_TOKEN:-YOUR_GITHUB_TOKEN_HERE}"
 GITHUB_USER="statesflowwishes-sketch"
 
 # Functions
