@@ -108,23 +108,28 @@
 
 ---
 
-## 🚀 Sofort starten
+## 🚀 Quick Start
 
+### 30 Sekunden - Verstehen
+- **Was ist AUTARK?** Integrierte KI-Entwicklungsumgebung
+- **Kernfunktionen:** AKIS (Knowledge), Video-AI, Orchestrator
+- **Zielgruppe:** Entwickler, Forscher, KI-Enthusiasten
+- **Compliance:** 🇪🇺 EU AI Act, 🇩🇪 DSGVO, 👥 Menschenrechte konform
+
+### 5 Minuten - Produktiv werden
 ```bash
 # System starten
 python3 autark_launcher.py demo
 
-# Video-AI Pipeline aktivieren
-python3 autark_launcher.py video
-
-# Knowledge Integration starten
-python3 autark_launcher.py knowledge
-
-# Status prüfen
-python3 autark_launcher.py status
+# Dashboard öffnen
+# → http://localhost:8888
 ```
 
-🎯 **Dashboard öffnen:** [http://localhost:8888](http://localhost:8888)
+### 60 Minuten - Beitragen
+1. [Development Setup](docs/onboarding/development-setup.md)
+2. [Architecture Overview](docs/atlas/architecture.md)
+3. [Contributing Guide](CONTRIBUTING.md)
+4. [**Compliance Framework**](COMPLIANCE.md) 🔒
 
 ---
 
